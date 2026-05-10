@@ -1,7 +1,6 @@
 window.bibleData = {
   books: [
-    {
-      id: "genesis", name: "창세기", testament: "OT",
+    { id: "genesis", name: "창세기", testament: "OT",
       titles: [
         "천지 창조",
         "인간 창조와 에덴동산",
@@ -53,10 +52,8 @@ window.bibleData = {
         "요셉의 두 아들을 축복하는 야곱",
         "열 두 아들에 대한 야곱의 예언",
         "야곱의 장례식과 요셉의 죽음"
-      ]
-    },
-    {
-      id: "exodus", name: "출애굽기", testament: "OT",
+      ] },
+    { id: "exodus", name: "출애굽기", testament: "OT",
       titles: [
         "이스라엘 민족의 번성과 노예 생활",
         "모세의 출생과 미디안 도피 생활",
@@ -98,8 +95,7 @@ window.bibleData = {
         "성막 뜰의 기구들과 총 성막 재료",
         "제사장 의복 제작과 성막 준공",
         "성막 봉헌식"
-      ]
-    },
+      ] },
     { id: "leviticus", name: "레위기", testament: "OT", titles: [] },
     { id: "numbers", name: "민수기", testament: "OT", titles: [] },
     { id: "deuteronomy", name: "신명기", testament: "OT", titles: [] },
@@ -117,8 +113,7 @@ window.bibleData = {
     { id: "esther", name: "에스더", testament: "OT", titles: [] },
     { id: "job", name: "욥기", testament: "OT", titles: [] },
     { id: "psalms1", name: "시편 1권", testament: "OT", startChapter: 1, titles: [] },
-    {
-      id: "psalms2", name: "시편 2권", testament: "OT", startChapter: 42,
+    { id: "psalms2", name: "시편 2권", testament: "OT", startChapter: 42,
       titles: [
         "하나님을 향한 갈망",
         "시온을 향한 소망",
@@ -151,8 +146,7 @@ window.bibleData = {
         "구원을 간구 하는 기도",
         "노년의 기도",
         "이상적 통치에 대한 간구와 기원"
-      ]
-    },
+      ] },
     { id: "psalms3", name: "시편 3권", testament: "OT", startChapter: 73, titles: [] },
     { id: "psalms4", name: "시편 4권", testament: "OT", startChapter: 90, titles: [] },
     { id: "psalms5", name: "시편 5권", testament: "OT", startChapter: 107, titles: [] },
@@ -176,7 +170,37 @@ window.bibleData = {
     { id: "haggai", name: "학개", testament: "OT", titles: [] },
     { id: "zechariah", name: "스가랴", testament: "OT", titles: [] },
     { id: "malachi", name: "말라기", testament: "OT", titles: [] },
-    { id: "matthew", name: "마태복음", testament: "NT", titles: [] },
+    { id: "matthew", name: "마태복음", testament: "NT",
+      titles: [
+        "예수의 족보와 탄생 과정",
+        "메시야 탄생에 대한 반응과 유년 시절",
+        "메시야를 위한 두 증언",
+        "시험 승리와 공생애의 개시",
+        "메시야 왕국의 새로운 기준",
+        "천국 시민의 새 생활",
+        "천국에 들어가는 길",
+        "질병과 자연을 다스리시는 왕의 권능",
+        "죄인과 병자를 치유하시는 왕의 권능",
+        "전도자의 자세와 각오",
+        "배척받으신 메시야의 질책과 권유",
+        "바리새인들의 메시야 배척",
+        "천국에 관한 비유들",
+        "이적적 권능과 고조되는 핍박Ⅰ",
+        "이적적 권능과 고조되는 핍박Ⅱ",
+        "메시야의 자기 공개",
+        "예수의 영화로우신 변형",
+        "천국 시민의 윤리관",
+        "천국 시민의 생활 규범과 영생의 조건",
+        "천국의實相에 관한 교훈",
+        "예루살렘에 당도하신 메시야",
+        "혼인 잔치 비유와 일련의 질문들",
+        "종교 지도자들에 관한 경고",
+        "역사의 종말에 대한 예언",
+        "종말을 예비하는 자의 자세",
+        "메시야의 최후 만찬",
+        "메시야의 수난과 죽음",
+        "부활하신 예수"
+      ] },
     { id: "mark", name: "마가복음", testament: "NT", titles: [] },
     { id: "luke", name: "누가복음", testament: "NT", titles: [] },
     { id: "john", name: "요한복음", testament: "NT", titles: [] },
