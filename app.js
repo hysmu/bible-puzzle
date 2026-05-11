@@ -296,10 +296,24 @@ function renderPieces() {
     shuffledData.forEach(item => {
         const piece = document.createElement('div');
         piece.classList.add('piece');
+        if (item.summary) piece.classList.add('has-summary');
         piece.draggable = true;
         piece.dataset.chapter = item.chapter;
-        piece.textContent = item.title;
-        
+
+        // Title
+        const titleEl = document.createElement('span');
+        titleEl.classList.add('piece-title');
+        titleEl.textContent = item.title;
+        piece.appendChild(titleEl);
+
+        // Summary below title (if exists)
+        if (item.summary) {
+            const summaryEl = document.createElement('span');
+            summaryEl.classList.add('piece-summary');
+            summaryEl.textContent = item.summary;
+            piece.appendChild(summaryEl);
+        }
+
         // Setup drag events
         piece.addEventListener('dragstart', dragStart);
         piece.addEventListener('dragend', dragEnd);
