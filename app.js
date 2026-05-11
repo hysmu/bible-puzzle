@@ -296,23 +296,11 @@ function renderPieces() {
     shuffledData.forEach(item => {
         const piece = document.createElement('div');
         piece.classList.add('piece');
-        if (item.summary) piece.classList.add('has-summary');
         piece.draggable = true;
         piece.dataset.chapter = item.chapter;
-
-        // Title
-        const titleEl = document.createElement('span');
-        titleEl.classList.add('piece-title');
-        titleEl.textContent = item.title;
-        piece.appendChild(titleEl);
-
-        // Summary below title (if exists)
-        if (item.summary) {
-            const summaryEl = document.createElement('span');
-            summaryEl.classList.add('piece-summary');
-            summaryEl.textContent = item.summary;
-            piece.appendChild(summaryEl);
-        }
+        // Store summary as data attribute only (not displayed on piece)
+        if (item.summary) piece.dataset.summary = item.summary;
+        piece.textContent = item.title;
 
         // Setup drag events
         piece.addEventListener('dragstart', dragStart);
@@ -376,7 +364,8 @@ function drop(e) {
         }
         
         playSuccessSound();
-        speakChapterTitle(draggedPiece.textContent);
+        // Speak only the title text (not summary)
+        speakChapterTitle(matchedData ? matchedData.title : draggedPiece.textContent);
         
         // Remove draggable property from piece
         draggedPiece.draggable = false;
