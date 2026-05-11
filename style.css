@@ -57,31 +57,54 @@ h1 {
 }
 
 select, button {
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1rem;
     font-size: 1rem;
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: 6px;
     outline: none;
     font-family: inherit;
 }
 
-button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    font-weight: bold;
-}
-
-button:hover {
-    background-color: #357abd;
-}
-
 .stats {
-    font-size: 1.2rem;
-    font-weight: bold;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    gap: 0.8rem;
+    font-size: 0.85rem;
+    width: 100%;
 }
+
+.stat-item {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+
+#timer-text {
+    color: var(--primary-color);
+    font-family: monospace;
+    font-size: 1.1rem;
+}
+
+.stat-item.record {
+    color: #7f8c8d;
+    font-weight: normal;
+    font-size: 0.85rem;
+}
+
+.tts-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
 
 /* Board and Pieces */
 main {
@@ -391,21 +414,50 @@ main {
     header {
         min-width: 100%;
         position: static;
-        padding: 1.5rem;
+        padding: 0.5rem;
         display: flex;
         flex-direction: column;
-        align-items: center; /* Center header content */
-    }
-
-    header .controls {
-        width: 100%;
-        max-width: 500px; /* Prevent controls from being too wide on tablets */
+        align-items: center;
     }
 
     h1 {
-        font-size: 1.5rem;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
         text-align: center;
     }
+
+    header .controls {
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 100%;
+        max-width: 600px;
+        gap: 0.3rem;
+        justify-content: center;
+    }
+
+    #testament-select { width: 65px; padding: 0.4rem 0.2rem; }
+    #book-select { flex: 1; min-width: 100px; padding: 0.4rem 0.5rem; }
+    #range-select { width: 100%; padding: 0.4rem 0.5rem; }
+    
+    #start-btn { flex: 2; min-width: 120px; padding: 0.5rem; }
+    #hint-btn { flex: 1; min-width: 60px; padding: 0.5rem; background-color: #f39c12; }
+    #open-editor-btn { flex: 1; min-width: 60px; padding: 0.5rem; background-color: #27ae60; font-size: 0.85rem; }
+
+    .stats {
+        padding: 0.3rem 0.5rem;
+        gap: 0.5rem;
+        border-radius: 4px;
+    }
+
+    .stat-item {
+        font-size: 0.8rem;
+    }
+
+    .tts-group label {
+        font-size: 0.8rem;
+    }
+
+
 
     .puzzle-board, .pieces-pool {
         /* Use auto-fill to maintain consistent piece size */

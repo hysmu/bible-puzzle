@@ -16,25 +16,20 @@
                     <option value="OT">구약</option>
                     <option value="NT">신약</option>
                 </select>
-                <select id="book-select">
-                </select>
-                <select id="range-select">
-                </select>
+                <select id="book-select"></select>
+                <select id="range-select"></select>
                 <button id="start-btn">게임 시작</button>
-                <div class="stats" style="text-align: center; margin: 0.5rem 0; padding: 1rem; border: 1px solid var(--border-color); border-radius: 6px; background-color: #f8f9fa; display: flex; flex-direction: column; gap: 0.6rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                    <div style="font-size: 1.05rem; padding-bottom: 0.2rem;">진행률: <span id="progress-text" style="font-weight: bold; color: #333;">0 / 0</span></div>
-                    <hr style="border: none; border-top: 1px dashed #d1d5db; margin: 0;">
-                    <div style="padding-bottom: 0.2rem;">진행 시간: <span id="timer-text" style="font-family: monospace; font-size: 1.4em; color: var(--primary-color); font-weight: bold;">00:00</span></div>
-                    <hr style="border: none; border-top: 1px dashed #d1d5db; margin: 0;">
-                    <div style="font-size: 0.9em; color: #7f8c8d; padding-bottom: 0.2rem;">최고 기록: <span id="best-record-text">없음</span></div>
-                    <hr style="border: none; border-top: 1px dashed #d1d5db; margin: 0;">
-                    <label style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; font-size: 0.95rem; color: #444; margin-top: 0.2rem;">
-                        <input type="checkbox" id="tts-toggle" checked style="accent-color: var(--primary-color); transform: scale(1.2);">
-                        🔊 음성 읽어주기 켜기
-                    </label>
+                <button id="hint-btn">💡 힌트</button>
+                <button id="open-editor-btn">에디터</button>
+                
+                <div class="stats">
+                    <div class="stat-item">진행: <span id="progress-text">0/0</span></div>
+                    <div class="stat-item">시간: <span id="timer-text">00:00</span></div>
+                    <div class="stat-item record">최고: <span id="best-record-text">없음</span></div>
+                    <div class="tts-group">
+                        <label><input type="checkbox" id="tts-toggle" checked> 🔊</label>
+                    </div>
                 </div>
-                <button id="open-editor-btn" style="background-color: #27ae60;">데이터 입력기</button>
-                <button id="hint-btn" style="background-color: #f39c12; margin-top: 0.5rem; color: #fff;">💡 힌트 보기</button>
             </div>
         </header>
 
