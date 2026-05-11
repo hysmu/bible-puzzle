@@ -8,6 +8,7 @@ let elapsedTime = 0;
 let currentBookRangeKey = "";
 let wrongAttempts = new Set();
 let currentUtterance = null; // Prevent garbage collection on iOS
+let autoScrollInterval = null; // For mobile auto-scroll
 
 const puzzleBoard = document.getElementById('puzzle-board');
 const piecesPool = document.getElementById('pieces-pool');
@@ -399,10 +400,36 @@ function touchMove(e) {
     const touch = e.touches[0];
     touchTarget.style.left = (touch.clientX - touchOffsetX) + 'px';
     touchTarget.style.top = (touch.clientY - touchOffsetY) + 'px';
+    
+    // Auto-scroll logic for mobile
+    const threshold = 80; // pixels from top/bottom
+    if (touch.clientY < threshold) {
+        startAutoScroll('up');
+    } else if (touch.clientY > window.innerHeight - threshold) {
+        startAutoScroll('down');
+    } else {
+        stopAutoScroll();
+    }
+}
+
+function startAutoScroll(direction) {
+    if (autoScrollInterval) return;
+    const scrollStep = 10;
+    autoScrollInterval = setInterval(() => {
+        window.scrollBy(0, direction === 'up' ? -scrollStep : scrollStep);
+    }, 16); // ~60fps
+}
+
+function stopAutoScroll() {
+    if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+    }
 }
 
 function touchEnd(e) {
     if (!touchTarget) return;
+    stopAutoScroll(); // Ensure scroll stops
     e.preventDefault();
     touchTarget.style.position = '';
     touchTarget.style.zIndex = '';

@@ -171,6 +171,7 @@ main {
     font-weight: 700;
     font-size: var(--piece-font-size, 1.1rem);
     user-select: none;
+    touch-action: none; /* Prevent browser scrolling while dragging */
     transition: transform 0.2s, box-shadow 0.2s;
     position: relative;
     z-index: 2;
