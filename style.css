@@ -275,35 +275,47 @@ main {
         text-align: center;
     }
 
+    /* Controls: 구약(고정폭) + 성경선택(유연) / 장선택 / 버튼3개 / 통계 */
     .controls {
         display: grid !important;
-        grid-template-columns: 100px 1fr 1fr; /* 3 columns grid */
-        gap: 0.6rem;
+        grid-template-columns: minmax(70px, 90px) 1fr minmax(60px, 80px);
+        gap: 0.5rem;
         width: 100%;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0;
     }
 
-    #testament-select { grid-column: 1; }
-    #book-select { grid-column: 2 / 4; }
-    #range-select { grid-column: 1 / 4; }
-    
-    #start-btn { grid-column: 1 / 3; }
-    #hint-btn { grid-column: 3; }
-    #open-editor-btn { grid-column: 1 / 4; margin-top: 0.2rem; }
+    /* 행 1: 구약|성경 선택 */
+    #testament-select { grid-column: 1; font-size: 0.9rem; padding: 0.5rem 0.3rem; }
+    #book-select      { grid-column: 2 / 4; padding: 0.5rem 0.6rem; }
 
+    /* 행 2: 장 선택 (세 칸 전부) */
+    #range-select { grid-column: 1 / 4; padding: 0.5rem 0.6rem; }
+
+    /* 행 3: 게임시작(2칸) | 힌트(1칸) | 에디터(1칸) */
+    #start-btn      { grid-column: 1 / 3; padding: 0.55rem; }
+    #hint-btn       { grid-column: 3;     padding: 0.55rem; background-color: #f39c12; }
+    #open-editor-btn { grid-column: 1 / 4; padding: 0.45rem; background-color: #27ae60;
+                        font-size: 0.85rem; }
+
+    /* 행 4: 통계 바 - 구분선 있는 별도 영역 */
     .stats {
         grid-column: 1 / 4;
-        margin-top: 0.8rem;
-        padding: 0.8rem;
-        border: 2px solid var(--primary-color);
-        background-color: #fff;
-        justify-content: space-around;
+        margin-top: 0.4rem;
+        padding: 0.6rem 1rem;
+        border: none;
+        border-top: 2px solid #e8eaf0;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #f0f4ff 0%, #fff 100%);
+        justify-content: space-between;
+        gap: 0.6rem;
     }
 
-    .stat-item { font-size: 0.9rem; }
+    .stat-item { font-size: 0.88rem; }
+    #timer-text { font-size: 1rem; }
 
+    /* 퍼즐 판: 기본 minmax를 더 크게 유지해 빈공간 방지 */
     .puzzle-board, .pieces-pool {
-        grid-template-columns: repeat(auto-fill, minmax(var(--item-min-width, 100px), 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(var(--item-min-width, 110px), 1fr));
         padding: 1rem;
         gap: 0.8rem;
     }
@@ -311,16 +323,20 @@ main {
     /* Small Phone optimization */
     @media (max-width: 600px) {
         .controls {
-            grid-template-columns: 85px 1fr 1fr;
+            grid-template-columns: minmax(62px, 76px) 1fr minmax(56px, 70px);
+            gap: 0.4rem;
         }
+
+        #testament-select { font-size: 0.82rem; padding: 0.45rem 0.2rem; }
+        #open-editor-btn  { font-size: 0.78rem; }
         
         .puzzle-board, .pieces-pool {
             grid-template-columns: repeat(auto-fill, minmax(var(--item-min-width, 80px), 1fr));
+            padding: 0.6rem;
+            gap: 0.5rem;
         }
 
-        .piece {
-            padding: 0.2rem !important;
-        }
+        .piece { padding: 0.25rem !important; }
     }
 
     .modal-content {
