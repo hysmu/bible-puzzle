@@ -175,8 +175,10 @@ main {
     transition: transform 0.2s, box-shadow 0.2s;
     position: relative;
     z-index: 2;
-    word-break: keep-all; /* Respect user's wish for space-based breaking */
-    overflow-wrap: break-word; /* Still allow breaking for long words */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    min-width: 0; /* Prevent content from pushing grid width */
+    width: 100%;
     color: #2c3e50;
 }
 
@@ -378,6 +380,11 @@ main {
         flex-direction: column;
         padding: 1rem;
         gap: 1.5rem;
+        align-items: stretch; /* Ensure children fill the width */
+    }
+
+    main {
+        width: 100%;
     }
 
     header {
@@ -400,22 +407,24 @@ main {
     }
 
     .puzzle-board, .pieces-pool {
-        /* Use auto-fill to fill the space instead of forcing 4 columns */
-        grid-template-columns: repeat(auto-fill, minmax(var(--item-min-width, 100px), 1fr));
-        padding: 1rem;
-        gap: 0.8rem;
+        /* Use auto-fit to fill the space and stretch pieces */
+        grid-template-columns: repeat(auto-fit, minmax(var(--item-min-width, 70px), 1fr));
+        padding: 0.8rem;
+        gap: 0.6rem;
+        width: 100%;
     }
 
     /* Small Phone optimization */
     @media (max-width: 600px) {
         .puzzle-board, .pieces-pool {
-            grid-template-columns: repeat(4, 1fr); /* Force 4 columns only on phones */
+            /* Force at least 2 columns on very small phones, otherwise auto-fit */
+            grid-template-columns: repeat(auto-fit, minmax(var(--item-min-width, 60px), 1fr));
             padding: 0.5rem;
             gap: 0.4rem;
         }
 
         .piece {
-            word-break: normal;
+            word-break: normal; /* Allow more flexible breaking on tiny screens */
             overflow-wrap: anywhere;
             padding: 0.2rem !important;
         }
