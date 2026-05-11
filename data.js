@@ -1,4 +1,4 @@
-window.bibleData = {
+// window.bibleData = {
   books: [
     { id: "genesis", name: "창세기", testament: "OT",
       titles: [
@@ -321,7 +321,25 @@ window.bibleData = {
         "덕행",
         "마지막 권면 (문안)"
       ] },
-    { id: "corinthians1", name: "고린도전서", testament: "NT", titles: [] },
+    { id: "corinthians1", name: "고린도전서", testament: "NT",
+      titles: [
+        "당파에 대한 권고 (십자가의 도)",
+        "하나님의 지혜와 인간의 지혜",
+        "전도자의 임무",
+        "충성에 대한 권면",
+        "교회 신성 (치리)",
+        "고린도 교회의 부패 (송사)",
+        "남녀간의 관계 (혼인)",
+        "우상의 제물에 관하여",
+        "자유에 대하여",
+        "말세의 경계",
+        "성찬문제",
+        "하나님의 은사와 일치론",
+        "사랑",
+        "예배 규범",
+        "부활에 대하여",
+        "대장부와 연보"
+      ] },
     { id: "corinthians2", name: "고린도후서", testament: "NT", titles: [] },
     { id: "galatians", name: "갈라디아서", testament: "NT", titles: [] },
     { id: "ephesians", name: "에베소서", testament: "NT", titles: [] },
