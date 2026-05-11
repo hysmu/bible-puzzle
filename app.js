@@ -200,29 +200,29 @@ function adjustSizes(total) {
     const isMobile = window.innerWidth <= 768;
     
     if (total <= 10) {
-        root.style.setProperty('--item-min-width', isMobile ? '120px' : '140px');
-        root.style.setProperty('--item-height', isMobile ? '100px' : '140px');
-        root.style.setProperty('--piece-font-size', isMobile ? '1rem' : '1.1rem');
-        root.style.setProperty('--chapter-font-size', isMobile ? '2.5rem' : '2.5rem');
-        root.style.setProperty('--piece-padding', isMobile ? '0.8rem' : '1rem');
+        root.style.setProperty('--item-min-width', isMobile ? '70px' : '140px');
+        root.style.setProperty('--item-height', isMobile ? '80px' : '140px');
+        root.style.setProperty('--piece-font-size', isMobile ? '0.8rem' : '1.1rem');
+        root.style.setProperty('--chapter-font-size', isMobile ? '1.8rem' : '2.5rem');
+        root.style.setProperty('--piece-padding', isMobile ? '0.4rem' : '1rem');
     } else if (total <= 20) {
-        root.style.setProperty('--item-min-width', isMobile ? '100px' : '110px');
-        root.style.setProperty('--item-height', isMobile ? '85px' : '110px');
-        root.style.setProperty('--piece-font-size', isMobile ? '0.9rem' : '1rem');
-        root.style.setProperty('--chapter-font-size', isMobile ? '2rem' : '2rem');
-        root.style.setProperty('--piece-padding', isMobile ? '0.6rem' : '0.8rem');
+        root.style.setProperty('--item-min-width', isMobile ? '70px' : '110px');
+        root.style.setProperty('--item-height', isMobile ? '75px' : '110px');
+        root.style.setProperty('--piece-font-size', isMobile ? '0.75rem' : '1rem');
+        root.style.setProperty('--chapter-font-size', isMobile ? '1.5rem' : '2rem');
+        root.style.setProperty('--piece-padding', isMobile ? '0.3rem' : '0.8rem');
     } else if (total <= 30) {
-        root.style.setProperty('--item-min-width', isMobile ? '85px' : '90px');
-        root.style.setProperty('--item-height', isMobile ? '75px' : '90px');
-        root.style.setProperty('--piece-font-size', isMobile ? '0.8rem' : '0.85rem');
-        root.style.setProperty('--chapter-font-size', isMobile ? '1.5rem' : '1.5rem');
-        root.style.setProperty('--piece-padding', isMobile ? '0.5rem' : '0.6rem');
+        root.style.setProperty('--item-min-width', isMobile ? '65px' : '90px');
+        root.style.setProperty('--item-height', isMobile ? '70px' : '90px');
+        root.style.setProperty('--piece-font-size', isMobile ? '0.7rem' : '0.85rem');
+        root.style.setProperty('--chapter-font-size', isMobile ? '1.2rem' : '1.5rem');
+        root.style.setProperty('--piece-padding', isMobile ? '0.2rem' : '0.6rem');
     } else {
-        root.style.setProperty('--item-min-width', isMobile ? '75px' : '75px');
-        root.style.setProperty('--item-height', isMobile ? '70px' : '75px');
-        root.style.setProperty('--piece-font-size', isMobile ? '0.75rem' : '0.7rem');
-        root.style.setProperty('--chapter-font-size', isMobile ? '1.2rem' : '1.2rem');
-        root.style.setProperty('--piece-padding', isMobile ? '0.4rem' : '0.4rem');
+        root.style.setProperty('--item-min-width', isMobile ? '60px' : '75px');
+        root.style.setProperty('--item-height', isMobile ? '65px' : '75px');
+        root.style.setProperty('--piece-font-size', isMobile ? '0.6rem' : '0.7rem');
+        root.style.setProperty('--chapter-font-size', isMobile ? '1rem' : '1.2rem');
+        root.style.setProperty('--piece-padding', isMobile ? '0.1rem' : '0.4rem');
     }
 }
 
