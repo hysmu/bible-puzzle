@@ -224,7 +224,120 @@ main {
     text-align: center;
     box-shadow: 0 15px 35px rgba(0,0,0,0.3);
     max-width: 90%;
+    position: relative;
 }
+
+/* ===== CRITICAL: hidden class ===== */
+.hidden {
+    display: none !important;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #95a5a6;
+    cursor: pointer;
+    line-height: 1;
+}
+.close-btn:hover { color: #333; }
+
+.slot.drag-over {
+    background-color: #d1ecf1;
+    border-color: var(--primary-color);
+}
+
+.slot.filled {
+    border-color: var(--success-color);
+    background-color: #e8f8f5;
+}
+
+.piece.dragging { opacity: 0.5; }
+
+.slot .piece {
+    cursor: default;
+    border-color: var(--success-color);
+    box-shadow: none;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 6px;
+    animation: popIn 0.3s ease-out forwards;
+}
+.slot .piece:hover { transform: none; }
+
+@keyframes popIn {
+    0%   { transform: scale(0.8); opacity: 0; }
+    50%  { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes flashSuccess {
+    0%   { background-color: var(--slot-bg); }
+    50%  { background-color: #a3e4d7; }
+    100% { background-color: #e8f8f5; }
+}
+
+.flash { animation: flashSuccess 0.5s ease-out forwards; }
+
+@keyframes hintFlash {
+    0%, 100% { box-shadow: 0 0 0 0 transparent; border-color: var(--border-color); }
+    50%       { box-shadow: 0 0 15px 5px rgba(243,156,18,0.8); border-color: #f39c12; }
+}
+.hint-flash {
+    animation: hintFlash 0.5s ease-in-out 4;
+    position: relative;
+    z-index: 10;
+}
+
+/* Tooltip arrow */
+.tooltip {
+    position: relative;
+}
+.tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 115%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    border-width: 6px;
+    border-style: solid;
+    border-color: rgba(44,62,80,0.98) transparent transparent transparent;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease-out;
+    z-index: 1000;
+    pointer-events: none;
+    margin-bottom: -11px;
+}
+.tooltip:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Review list */
+#review-list li {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid #eef0f2;
+    display: flex;
+    align-items: center;
+}
+#review-list li:last-child { border-bottom: none; }
+#review-list li .chapter {
+    font-weight: bold;
+    color: #e74c3c;
+    margin-right: 1rem;
+    min-width: 45px;
+}
+#review-list li .title {
+    flex: 1;
+    color: #2c3e50;
+    font-size: 1.05rem;
+}
+
 
 .tooltip::after {
     content: attr(data-tooltip);
