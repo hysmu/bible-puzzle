@@ -720,35 +720,41 @@ function makeDraggable(modalId) {
     const modal = document.getElementById(modalId);
     const content = modal.querySelector('.modal-content');
     const header = content.querySelector('h2'); // Drag by the title
-    
+
+    // h2에 grab 커서 적용
+    header.style.cursor = 'grab';
+    header.style.userSelect = 'none';
+
     let isDragging = false;
     let offsetX, offsetY;
 
     header.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        
-        // Get current position
+        e.preventDefault();
+
+        // 현재 렌더링 위치를 읽어 left/top으로 즉시 고정
+        // (transform: translate(-50%,-50%) 상태에서 바로 offsetX/Y를 쓰면 위치가 튐)
         const rect = content.getBoundingClientRect();
+        content.style.left      = rect.left + 'px';
+        content.style.top       = rect.top  + 'px';
+        content.style.transform = 'none';
+
         offsetX = e.clientX - rect.left;
         offsetY = e.clientY - rect.top;
-        
-        content.style.cursor = 'grabbing';
+
+        isDragging = true;
+        header.style.cursor = 'grabbing';
     });
 
     document.addEventListener('mousemove', (e) => {
         if (!isDragging) return;
-        
-        const x = e.clientX - offsetX;
-        const y = e.clientY - offsetY;
-        
-        content.style.left = x + 'px';
-        content.style.top = y + 'px';
-        content.style.transform = 'none'; // Disable the centering transform while dragging
+        content.style.left = (e.clientX - offsetX) + 'px';
+        content.style.top  = (e.clientY - offsetY) + 'px';
     });
 
     document.addEventListener('mouseup', () => {
+        if (!isDragging) return;
         isDragging = false;
-        content.style.cursor = '';
+        header.style.cursor = 'grab';
     });
 }
 
