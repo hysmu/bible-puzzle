@@ -349,7 +349,7 @@ main {
 .tooltip::after {
     content: attr(data-tooltip);
     position: absolute;
-    top: calc(100% + 10px);   /* 슬롯 아래로 */
+    top: calc(100% + 10px);
     left: 50%;
     transform: translateX(-50%) translateY(-8px);
     background-color: rgba(30, 50, 80, 0.97);
@@ -359,32 +359,40 @@ main {
     font-size: 0.88rem;
     font-weight: 400;
     white-space: pre-wrap;
-    max-width: min(380px, 90vw);  /* 넓게, 화면 초과 방지 */
+    max-width: min(360px, 90vw);
     width: max-content;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.2s ease-out;
-    z-index: 1000;
+    transition: opacity 0.2s ease-out, visibility 0.2s ease-out,
+                transform 0.2s ease-out;
+    z-index: 9999;
     text-align: left;
     line-height: 1.5;
     box-shadow: 0 6px 20px rgba(0,0,0,0.25);
     pointer-events: none;
 }
 
+/* 오른쪽 끝 슬롯: 툴팁을 오른쪽 정렬 */
+.tooltip.tooltip-right::after {
+    left: auto;
+    right: 0;
+    transform: translateX(0) translateY(-8px);
+}
+
 /* 위쪽을 향한 화살표 */
 .tooltip::before {
     content: '';
     position: absolute;
-    top: calc(100% + 4px);   /* 슬롯 아래 화살표 */
+    top: calc(100% + 4px);
     left: 50%;
     transform: translateX(-50%) translateY(-8px);
     border-width: 6px;
     border-style: solid;
-    border-color: transparent transparent rgba(30, 50, 80, 0.97) transparent;  /* 아래 방향 */
+    border-color: transparent transparent rgba(30, 50, 80, 0.97) transparent;
     opacity: 0;
     visibility: hidden;
     transition: all 0.2s ease-out;
-    z-index: 1000;
+    z-index: 9999;
     pointer-events: none;
 }
 
@@ -393,6 +401,10 @@ main {
     opacity: 1;
     visibility: visible;
     transform: translateX(-50%) translateY(0);
+}
+
+.tooltip.tooltip-right:hover::after {
+    transform: translateX(0) translateY(0);
 }
 
 /* --- Mobile/Tablet Optimization --- */
