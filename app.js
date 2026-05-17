@@ -261,9 +261,11 @@ function updateProgress() {
 function resetModalPosition(modal) {
     const content = modal.querySelector('.modal-content');
     if (content) {
+        content.style.position = '';
         content.style.left = '';
         content.style.top = '';
         content.style.transform = '';
+        content.style.margin = '';
     }
 }
 
@@ -767,11 +769,12 @@ function makeDraggable(modalId) {
         e.preventDefault();
 
         // 현재 렌더링 위치를 읽어 left/top으로 즉시 고정
-        // (transform: translate(-50%,-50%) 상태에서 바로 offsetX/Y를 쓰면 위치가 튐)
         const rect = content.getBoundingClientRect();
+        content.style.position  = 'absolute';
         content.style.left      = rect.left + 'px';
         content.style.top       = rect.top  + 'px';
         content.style.transform = 'none';
+        content.style.margin    = '0';
 
         offsetX = e.clientX - rect.left;
         offsetY = e.clientY - rect.top;
