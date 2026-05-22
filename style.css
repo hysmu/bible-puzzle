@@ -375,10 +375,16 @@ main {
     pointer-events: none;
 }
 
-/* 오른쪽 끝 슬롯: 툴팁을 오른쪽 정렬 */
+/* 오른쪽 끝 슬롯: 툴팁을 오른쪽 정렬 (왼쪽으로 펼침) */
 .tooltip.tooltip-right::after {
     left: auto;
     right: 0;
+    transform: translateX(0) translateY(-8px);
+}
+
+/* 왼쪽 끝 슬롯: 툴팁을 왼쪽 정렬 (오른쪽으로 펼침) */
+.tooltip.tooltip-left::after {
+    left: 0;
     transform: translateX(0) translateY(-8px);
 }
 
@@ -407,6 +413,10 @@ main {
 }
 
 .tooltip.tooltip-right:hover::after {
+    transform: translateX(0) translateY(0);
+}
+
+.tooltip.tooltip-left:hover::after {
     transform: translateX(0) translateY(0);
 }
 

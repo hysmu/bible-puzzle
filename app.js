@@ -286,15 +286,22 @@ function renderBoard() {
         slot.addEventListener('dragleave', dragLeave);
         slot.addEventListener('drop', drop);
         
-        // 툴팁 오른쪽 오버플로 방지: 마우스 진입 시 위치 계산
+        // 툴팁 오버플로 방지: 마우스 진입 시 좌우 경계 계산
         slot.addEventListener('mouseenter', function() {
             if (!this.classList.contains('tooltip')) return;
-            this.classList.remove('tooltip-right');
+            // 초기화
+            this.classList.remove('tooltip-right', 'tooltip-left');
             const rect = this.getBoundingClientRect();
             const tooltipMaxWidth = Math.min(360, window.innerWidth * 0.9);
-            const spaceOnRight = window.innerWidth - rect.left - (rect.width / 2);
+            const slotCenterX = rect.left + rect.width / 2;
+            const spaceOnRight = window.innerWidth - slotCenterX;
+            const spaceOnLeft  = slotCenterX;
             if (spaceOnRight < tooltipMaxWidth / 2 + 16) {
+                // 오른쪽 공간 부족 → 슬롯 오른쪽 끝에 맞춰 왼쪽으로 펼침
                 this.classList.add('tooltip-right');
+            } else if (spaceOnLeft < tooltipMaxWidth / 2 + 16) {
+                // 왼쪽 공간 부족 → 슬롯 왼쪽 끝에 맞춰 오른쪽으로 펼침
+                this.classList.add('tooltip-left');
             }
         });
         
