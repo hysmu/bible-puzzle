@@ -1,5 +1,18 @@
 // 전역 변수 window.bibleData 사용
 
+const CUSTOM_DATA_KEY = 'bible_puzzle_custom_data';
+function loadCustomBibleData() {
+    const saved = localStorage.getItem(CUSTOM_DATA_KEY);
+    if (saved) {
+        try {
+            window.bibleData = JSON.parse(saved);
+        } catch (e) {
+            console.error("Failed to parse custom bible data", e);
+        }
+    }
+}
+loadCustomBibleData();
+
 let currentData = [];
 let totalPieces = 0;
 let placedPieces = 0;
@@ -9,6 +22,7 @@ let currentBookRangeKey = "";
 let wrongAttempts = new Set();
 let currentUtterance = null; // Prevent garbage collection on iOS
 let autoScrollInterval = null; // For mobile auto-scroll
+let gameStartTime = null;  // 게임 시작 시각 (Date 객체)
 
 const puzzleBoard = document.getElementById('puzzle-board');
 const piecesPool = document.getElementById('pieces-pool');
@@ -148,6 +162,7 @@ function initGame() {
     
     renderBoard();
     renderPieces();
+    gameStartTime = new Date(); // 게임 시작 시각 기록
     startTimer();
 }
 
@@ -196,6 +211,9 @@ function checkAndSaveBestRecord() {
     } else {
         if (newRecordMsg) newRecordMsg.style.display = 'none';
     }
+
+    // 게임 결과 저장
+    saveGameResult();
 }
 
 function adjustSizes(total) {
@@ -391,7 +409,9 @@ function drop(e) {
         
         playSuccessSound();
         // Speak only the title text (not summary)
-        speakChapterTitle(matchedData ? matchedData.title : draggedPiece.textContent);
+        const chapNum = matchedData ? matchedData.chapter : slotChapter;
+        const titleTxt = matchedData ? matchedData.title : draggedPiece.textContent;
+        speakChapterTitle(chapNum, titleTxt);
         
         // Remove draggable property from piece
         draggedPiece.draggable = false;
@@ -512,7 +532,7 @@ function touchEnd(e) {
             }
             
             playSuccessSound();
-            speakChapterTitle(touchTarget.textContent);
+            speakChapterTitle(slotChapter, touchTarget.textContent);
             touchTarget.draggable = false;
             touchTarget.dataset.placed = "true";
             touchTarget.style.position = 'relative'; // reset
@@ -577,12 +597,13 @@ function playSuccessSound() {
     } catch(e) {}
 }
 
-function speakChapterTitle(titleText) {
+function speakChapterTitle(chapter, titleText) {
     if (ttsToggle && ttsToggle.checked && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         
+        const speakText = `${chapter}장 ${titleText}`;
         // Use global variable to prevent garbage collection on some browsers
-        currentUtterance = new SpeechSynthesisUtterance(titleText);
+        currentUtterance = new SpeechSynthesisUtterance(speakText);
         currentUtterance.lang = 'ko-KR';
         currentUtterance.rate = 1.0;
         
@@ -687,6 +708,7 @@ const editTestamentSelect = document.getElementById('edit-testament-select');
 const editBookSelect = document.getElementById('edit-book-select');
 const editTextArea = document.getElementById('edit-textarea');
 const copyDataBtn = document.getElementById('copy-data-btn');
+const saveDataBtn = document.getElementById('save-data-btn');
 
 openEditorBtn.addEventListener('click', () => {
     editorModal.classList.remove('hidden');
@@ -759,6 +781,26 @@ copyDataBtn.addEventListener('click', () => {
     });
 });
 
+saveDataBtn.addEventListener('click', () => {
+    const bookId = editBookSelect.value;
+    const book = window.bibleData.books.find(b => b.id === bookId);
+    if (!book) return;
+
+    // Update book titles from textarea
+    const newTitles = editTextArea.value.split('\n').map(t => t.trim()).filter(t => t !== '');
+    book.titles = newTitles;
+
+    // Save to localStorage
+    localStorage.setItem(CUSTOM_DATA_KEY, JSON.stringify(window.bibleData));
+
+    alert("데이터가 로컬에 바로 저장되었습니다!");
+    
+    // Refresh dropdowns and game
+    initDropdowns();
+    initGame();
+    editorModal.classList.add('hidden');
+});
+
 // --- Draggable Modal Logic ---
 function makeDraggable(modalId) {
     const modal = document.getElementById(modalId);
@@ -805,3 +847,301 @@ function makeDraggable(modalId) {
 
 // Apply draggable logic to modals
 makeDraggable('success-modal');
+
+// =============================================
+// ===       게임 기록 (History) 기능         ===
+// =============================================
+
+const HISTORY_KEY = 'bible_puzzle_history';
+
+// ---------- 저장 ----------
+function saveGameResult() {
+    const bookId   = bookSelect.value;
+    const rangeVal = rangeSelect.value;
+    const book     = window.bibleData.books.find(b => b.id === bookId);
+    if (!book || !rangeVal) return;
+
+    const [startChap, endChap] = rangeVal.split('-').map(Number);
+    const endTime = new Date();
+
+    const result = {
+        id:             Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        testament:      book.testament,
+        testamentLabel: book.testament === 'OT' ? '구약' : '신약',
+        bookId:         bookId,
+        bookName:       book.name,
+        range:          rangeVal,
+        startChap:      startChap,
+        endChap:        endChap,
+        startTime:      gameStartTime ? gameStartTime.toISOString() : endTime.toISOString(),
+        endTime:        endTime.toISOString(),
+        elapsedSec:     elapsedTime,
+        memo:           ''
+    };
+
+    const history = loadHistory();
+    history.push(result);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+
+function loadHistory() {
+    try {
+        return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+    } catch { return []; }
+}
+
+// ---------- 필터 ----------
+let currentHistoryFilter = 'daily';
+let histCustomFrom = null;
+let histCustomTo   = null;
+
+function getFilteredHistory() {
+    const all = loadHistory();
+    const now = new Date();
+
+    if (currentHistoryFilter === 'daily') {
+        const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        return all.filter(r => new Date(r.endTime) >= start);
+    }
+    if (currentHistoryFilter === 'weekly') {
+        const day = now.getDay() === 0 ? 6 : now.getDay() - 1; // 월요일 기준
+        const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - day);
+        return all.filter(r => new Date(r.endTime) >= start);
+    }
+    if (currentHistoryFilter === 'monthly') {
+        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+        return all.filter(r => new Date(r.endTime) >= start);
+    }
+    if (currentHistoryFilter === 'custom' && histCustomFrom && histCustomTo) {
+        const from = new Date(histCustomFrom + 'T00:00:00');
+        const to   = new Date(histCustomTo   + 'T23:59:59');
+        return all.filter(r => {
+            const t = new Date(r.endTime);
+            return t >= from && t <= to;
+        });
+    }
+    return all;
+}
+
+// ---------- 렌더링 ----------
+function fmtTime(isoStr) {
+    const d = new Date(isoStr);
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mi = String(d.getMinutes()).padStart(2,'0');
+    return `${mm}/${dd} ${hh}:${mi}`;
+}
+function fmtElapsed(sec) {
+    const m = String(Math.floor(sec/60)).padStart(2,'0');
+    const s = String(sec % 60).padStart(2,'0');
+    return `${m}:${s}`;
+}
+
+// 연속된 같은 성경(bookId) 기록을 하나의 그룹으로 묶기
+// 중간에 다른 성경이 들어오면 같은 bookId라도 새 그룹으로 분리
+function groupConsecutive(rows) {
+    const groups = [];
+    rows.forEach(r => {
+        const last = groups[groups.length - 1];
+        if (last && last.bookId === r.bookId) {
+            last.records.push(r);
+        } else {
+            groups.push({
+                bookId:        r.bookId,
+                bookName:      r.bookName,
+                testament:     r.testament,
+                testamentLabel:r.testamentLabel,
+                records:       [r]
+            });
+        }
+    });
+    return groups;
+}
+
+function renderHistoryList() {
+    const tbody     = document.getElementById('history-tbody');
+    const emptyMsg  = document.getElementById('history-empty');
+    const countSpan = document.getElementById('history-count');
+    const rows = getFilteredHistory().slice().reverse(); // 최신순
+
+    countSpan.textContent = `${rows.length}건`;
+    tbody.innerHTML = '';
+
+    if (rows.length === 0) {
+        emptyMsg.classList.remove('hidden');
+        return;
+    }
+    emptyMsg.classList.add('hidden');
+
+    const groups = groupConsecutive(rows);
+
+    groups.forEach((g, gi) => {
+        const cnt     = g.records.length;
+        const best    = Math.min(...g.records.map(r => r.elapsedSec));
+        const avgSec  = Math.round(g.records.reduce((s, r) => s + r.elapsedSec, 0) / cnt);
+        const totalSec= g.records.reduce((s, r) => s + r.elapsedSec, 0);
+        const groupId = `hg-${gi}`;
+        const isSingle = cnt === 1;
+
+        // ── 그룹 헤더 행 ──
+        const headerTr = document.createElement('tr');
+        headerTr.className = 'hist-group-header';
+        headerTr.dataset.group = groupId;
+        headerTr.innerHTML = `
+            <td><span class="hist-badge ${g.testament.toLowerCase()}">${g.testamentLabel}</span></td>
+            <td><strong>${g.bookName}</strong></td>
+            <td class="hide-mobile" colspan="2">
+                <span class="hist-stat-pill">📚 ${cnt}회</span>
+                <span class="hist-stat-pill best">🏆 ${fmtElapsed(best)}</span>
+                <span class="hist-stat-pill avg">⌀ ${fmtElapsed(avgSec)}</span>
+                <span class="hist-stat-pill total hide-mobile">Σ ${fmtElapsed(totalSec)}</span>
+            </td>
+            <td>${fmtTime(g.records[0].endTime)}</td>
+            <td><span class="hist-elapsed">${fmtElapsed(g.records[0].elapsedSec)}</span></td>
+            <td class="memo-cell">${g.records[0].memo ? escapeHtml(g.records[0].memo) : '<span style="color:#ccc;">—</span>'}</td>
+            <td>
+                <button class="hist-action-btn hist-edit-btn" data-id="${g.records[0].id}">✏️ 메모</button>
+                <button class="hist-action-btn hist-del-btn"  data-id="${g.records[0].id}">🗑️</button>
+                ${cnt > 1 ? `<button class="hist-action-btn hist-expand-btn" data-group="${groupId}" title="펼치기/접기">▼ ${cnt-1}건 더</button>` : ''}
+            </td>
+        `;
+        tbody.appendChild(headerTr);
+
+        // ── 나머지 개별 행 (접힌 상태) ──
+        if (cnt > 1) {
+            g.records.slice(1).forEach(r => {
+                const tr = document.createElement('tr');
+                tr.className = 'hist-detail-row hidden';
+                tr.dataset.group = groupId;
+                tr.innerHTML = `
+                    <td></td>
+                    <td style="color:#999;font-size:0.82rem;">↳ 동일</td>
+                    <td class="hide-mobile">${r.startChap}~${r.endChap}장</td>
+                    <td class="hide-mobile">${fmtTime(r.startTime)}</td>
+                    <td>${fmtTime(r.endTime)}</td>
+                    <td><span class="hist-elapsed">${fmtElapsed(r.elapsedSec)}</span></td>
+                    <td class="memo-cell">${r.memo ? escapeHtml(r.memo) : '<span style="color:#ccc;">—</span>'}</td>
+                    <td>
+                        <button class="hist-action-btn hist-edit-btn" data-id="${r.id}">✏️ 메모</button>
+                        <button class="hist-action-btn hist-del-btn"  data-id="${r.id}">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    });
+
+    // ── 이벤트: 펼치기/접기 ──
+    tbody.querySelectorAll('.hist-expand-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const gid = btn.dataset.group;
+            const detailRows = tbody.querySelectorAll(`.hist-detail-row[data-group="${gid}"]`);
+            const isOpen = !detailRows[0].classList.contains('hidden');
+            detailRows.forEach(row => row.classList.toggle('hidden', isOpen));
+            btn.textContent = isOpen
+                ? `▼ ${detailRows.length}건 더`
+                : `▲ 접기`;
+        });
+    });
+
+    // ── 이벤트: 메모·삭제 ──
+    tbody.querySelectorAll('.hist-edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => openMemoModal(btn.dataset.id));
+    });
+    tbody.querySelectorAll('.hist-del-btn').forEach(btn => {
+        btn.addEventListener('click', () => deleteResult(btn.dataset.id));
+    });
+}
+
+function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ---------- 모달 열기/닫기 ----------
+const historyModal = document.getElementById('history-modal');
+
+document.getElementById('open-history-btn').addEventListener('click', () => {
+    historyModal.classList.remove('hidden');
+    renderHistoryList();
+});
+document.getElementById('close-history-btn').addEventListener('click', () => {
+    historyModal.classList.add('hidden');
+});
+
+// ---------- 탭 전환 ----------
+document.querySelectorAll('.htab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.htab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentHistoryFilter = tab.dataset.filter;
+        const customRange = document.getElementById('history-custom-range');
+        if (currentHistoryFilter === 'custom') {
+            customRange.classList.remove('hidden');
+        } else {
+            customRange.classList.add('hidden');
+            renderHistoryList();
+        }
+    });
+});
+
+document.getElementById('hist-apply-btn').addEventListener('click', () => {
+    histCustomFrom = document.getElementById('hist-date-from').value;
+    histCustomTo   = document.getElementById('hist-date-to').value;
+    if (!histCustomFrom || !histCustomTo) { alert('시작일과 종료일을 모두 선택해주세요.'); return; }
+    renderHistoryList();
+});
+
+// ---------- 전체 삭제 ----------
+document.getElementById('delete-all-history-btn').addEventListener('click', () => {
+    const rows = getFilteredHistory();
+    if (rows.length === 0) { alert('삭제할 기록이 없습니다.'); return; }
+    if (!confirm(`현재 필터에 해당하는 기록 ${rows.length}건을 모두 삭제할까요?`)) return;
+
+    if (currentHistoryFilter === 'daily' || currentHistoryFilter === 'weekly' ||
+        currentHistoryFilter === 'monthly' || currentHistoryFilter === 'custom') {
+        // 필터에 속하는 id만 제거
+        const deleteIds = new Set(rows.map(r => r.id));
+        const all = loadHistory().filter(r => !deleteIds.has(r.id));
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(all));
+    } else {
+        localStorage.removeItem(HISTORY_KEY);
+    }
+    renderHistoryList();
+});
+
+// ---------- 개별 삭제 ----------
+function deleteResult(id) {
+    if (!confirm('이 기록을 삭제할까요?')) return;
+    const history = loadHistory().filter(r => r.id !== id);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    renderHistoryList();
+}
+
+// ---------- 메모 편집 ----------
+const memoModal   = document.getElementById('memo-modal');
+const memoTextarea = document.getElementById('memo-textarea');
+let   editingMemoId = null;
+
+function openMemoModal(id) {
+    editingMemoId = id;
+    const record = loadHistory().find(r => r.id === id);
+    memoTextarea.value = record ? (record.memo || '') : '';
+    memoModal.classList.remove('hidden');
+    memoTextarea.focus();
+}
+
+document.getElementById('close-memo-btn').addEventListener('click',  () => memoModal.classList.add('hidden'));
+document.getElementById('close-memo-btn2').addEventListener('click', () => memoModal.classList.add('hidden'));
+document.getElementById('save-memo-btn').addEventListener('click', () => {
+    if (!editingMemoId) return;
+    const history = loadHistory();
+    const idx = history.findIndex(r => r.id === editingMemoId);
+    if (idx !== -1) {
+        history[idx].memo = memoTextarea.value.trim();
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    }
+    memoModal.classList.add('hidden');
+    renderHistoryList();
+});
+

@@ -21,6 +21,7 @@
                 <button id="start-btn">게임 시작</button>
                 <button id="hint-btn">💡 힌트</button>
                 <button id="open-editor-btn">에디터</button>
+                <button id="open-history-btn" style="background-color:#8e44ad;">&#128202; 기록</button>
                 
                 <div class="stats">
                     <div class="stat-item">진행: <span id="progress-text">0/0</span></div>
@@ -90,12 +91,73 @@
                 <textarea id="edit-textarea" rows="15" style="width: 100%; padding: 10px; font-size: 1rem; border: 1px solid var(--border-color); border-radius: 4px; resize: vertical; line-height: 1.5; font-family: inherit;" placeholder="장 제목과 요약 내용을 '|' 기호로 구분해서 입력하세요.&#10;(요약 내용이 없으면 장 제목만 입력해도 됩니다)&#10;&#10;예:&#10;천지 창조 | 태초에 하나님이 천지를 창조하시니라&#10;에덴 동산 | 아담과 하와가 에덴 동산에서 살게 됨&#10;죄의 기원과 인류의 타락"></textarea>
                 <div style="margin-top: 1rem; display: flex; gap: 10px; justify-content: flex-end;">
                     <button id="close-editor-btn" style="background-color: #95a5a6;">닫기</button>
+                    <button id="save-data-btn" style="background-color: var(--primary-color);">💾 바로 저장</button>
                     <button id="copy-data-btn" style="background-color: var(--success-color);">전체 코드 복사</button>
                 </div>
             </div>
         </div>
     </div>
-    
+
+    <!-- History Modal -->
+    <div id="history-modal" class="modal hidden">
+        <div class="modal-content history-modal-content">
+            <span id="close-history-btn" class="close-btn">&times;</span>
+            <h2 style="color:#8e44ad;">&#128202; 게임 기록</h2>
+
+            <!-- 필터 탭 -->
+            <div class="history-filter-tabs">
+                <button class="htab active" data-filter="daily">일간</button>
+                <button class="htab" data-filter="weekly">주간</button>
+                <button class="htab" data-filter="monthly">월간</button>
+                <button class="htab" data-filter="custom">선택기간</button>
+            </div>
+            <div id="history-custom-range" class="history-custom-range hidden">
+                <label>시작 <input type="date" id="hist-date-from"></label>
+                <label>종료 <input type="date" id="hist-date-to"></label>
+                <button id="hist-apply-btn">조회</button>
+            </div>
+
+            <!-- 통계 및 전체삭제 -->
+            <div class="history-toolbar">
+                <span id="history-count">0건</span>
+                <button id="delete-all-history-btn" class="btn-danger-sm">휴지통 비우기</button>
+            </div>
+
+            <!-- 목록 -->
+            <div class="history-list-wrap">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>구분</th>
+                            <th>성경</th>
+                            <th>범위</th>
+                            <th>시작</th>
+                            <th>종료</th>
+                            <th>소요</th>
+                            <th>메모</th>
+                            <th>액션</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-tbody"></tbody>
+                </table>
+                <p id="history-empty" class="history-empty hidden">해당 기간의 기록이 없습니다.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Memo Edit Modal -->
+    <div id="memo-modal" class="modal hidden">
+        <div class="modal-content" style="max-width:420px;">
+            <span id="close-memo-btn" class="close-btn">&times;</span>
+            <h2 style="font-size:1.3rem;margin-bottom:1rem;">메모 편집</h2>
+            <textarea id="memo-textarea" rows="5" style="width:100%;padding:10px;font-size:1rem;border:1px solid var(--border-color);border-radius:8px;resize:vertical;font-family:inherit;" placeholder="메모를 입력하세요..."></textarea>
+            <div style="margin-top:1rem;display:flex;gap:10px;justify-content:flex-end;">
+                <button id="close-memo-btn2" style="background:#95a5a6;">취소</button>
+                <button id="save-memo-btn" style="background:var(--primary-color);">&#128190; 저장</button>
+            </div>
+        </div>
+    </div>
+
     <script src="data.js"></script>
     <script src="app.js"></script>
 </body>
