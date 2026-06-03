@@ -597,11 +597,29 @@ function playSuccessSound() {
     } catch(e) {}
 }
 
+function numberToSinoKorean(num) {
+    const units = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
+    const positions = ["", "십", "백"];
+    if (num === 0) return "영";
+    let result = "";
+    const str = String(num);
+    const len = str.length;
+    for (let i = 0; i < len; i++) {
+        const digit = Number(str[len - 1 - i]);
+        if (digit !== 0) {
+            const showDigit = (digit === 1 && i > 0) ? "" : units[digit];
+            result = showDigit + positions[i] + result;
+        }
+    }
+    return result;
+}
+
 function speakChapterTitle(chapter, titleText) {
     if (ttsToggle && ttsToggle.checked && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         
-        const speakText = `${chapter}장 ${titleText}`;
+        const sinoKoreanChapter = numberToSinoKorean(Number(chapter));
+        const speakText = `${sinoKoreanChapter}장 ${titleText}`;
         // Use global variable to prevent garbage collection on some browsers
         currentUtterance = new SpeechSynthesisUtterance(speakText);
         currentUtterance.lang = 'ko-KR';
