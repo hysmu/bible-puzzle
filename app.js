@@ -691,21 +691,68 @@ function populateRanges() {
     }
     
     const endOffset = startOffset + total - 1;
+    const addedRanges = new Set();
     let html = '';
-    for(let i=0; i<total; i+=10) {
-        const start = startOffset + i;
-        const end = Math.min(start + 9, endOffset);
-        html += `<option value="${start}-${end}">${start}장 ~ ${end}장 (${end-start+1}개)</option>`;
+    
+    function addOption(start, end, labelSuffix = '') {
+        const key = `${start}-${end}`;
+        if (addedRanges.has(key)) return;
+        addedRanges.add(key);
+        
+        const count = end - start + 1;
+        const label = labelSuffix ? labelSuffix : `${start}장 ~ ${end}장 (${count}개)`;
+        html += `<option value="${key}">${label}</option>`;
     }
-    for(let i=0; i<total; i+=20) {
-        if(total <= 10) break;
-        const start = startOffset + i;
-        const end = Math.min(start + 19, endOffset);
-        html += `<option value="${start}-${end}">${start}장 ~ ${end}장 (${end-start+1}개)</option>`;
+    
+    const isTotalAddedDirectly = total > 20;
+    
+    // 10개 단위 범위 생성
+    let currentStart = startOffset;
+    while (currentStart <= endOffset) {
+        let currentEnd = currentStart + 9;
+        const remaining = endOffset - currentEnd;
+        if (remaining > 0 && remaining < 5) {
+            currentEnd = endOffset;
+        } else if (currentEnd > endOffset) {
+            currentEnd = endOffset;
+        }
+        
+        if (isTotalAddedDirectly && currentStart === startOffset && currentEnd === endOffset) {
+            currentStart = currentEnd + 1;
+            continue;
+        }
+        
+        addOption(currentStart, currentEnd);
+        currentStart = currentEnd + 1;
     }
-    if (total > 20) {
-        html += `<option value="${startOffset}-${endOffset}">전체 ${startOffset}장 ~ ${endOffset}장 (${total}개)</option>`;
+    
+    // 20개 단위 범위 생성
+    if (total > 10) {
+        currentStart = startOffset;
+        while (currentStart <= endOffset) {
+            let currentEnd = currentStart + 19;
+            const remaining = endOffset - currentEnd;
+            if (remaining > 0 && remaining < 5) {
+                currentEnd = endOffset;
+            } else if (currentEnd > endOffset) {
+                currentEnd = endOffset;
+            }
+            
+            if (isTotalAddedDirectly && currentStart === startOffset && currentEnd === endOffset) {
+                currentStart = currentEnd + 1;
+                continue;
+            }
+            
+            addOption(currentStart, currentEnd);
+            currentStart = currentEnd + 1;
+        }
     }
+    
+    // 전체 범위 생성
+    if (isTotalAddedDirectly) {
+        addOption(startOffset, endOffset, `전체 ${startOffset}장 ~ ${endOffset}장 (${total}개)`);
+    }
+    
     rangeSelect.innerHTML = html;
 }
 
@@ -729,6 +776,7 @@ const copyDataBtn = document.getElementById('copy-data-btn');
 const saveDataBtn = document.getElementById('save-data-btn');
 
 openEditorBtn.addEventListener('click', () => {
+    resetModalPosition(editorModal);
     editorModal.classList.remove('hidden');
     populateEditBooks();
 });
@@ -865,6 +913,7 @@ function makeDraggable(modalId) {
 
 // Apply draggable logic to modals
 makeDraggable('success-modal');
+makeDraggable('editor-modal');
 
 // =============================================
 // ===       게임 기록 (History) 기능         ===
