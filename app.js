@@ -614,12 +614,21 @@ function numberToSinoKorean(num) {
     return result;
 }
 
+function formatTitleForTTS(titleText) {
+    return titleText.replace(/\s*\(\s*(\d+)\s*\)/g, (match, numStr) => {
+        const num = Number(numStr);
+        const sinoKorean = numberToSinoKorean(num);
+        return ` ${sinoKorean}절`;
+    }).trim();
+}
+
 function speakChapterTitle(chapter, titleText) {
     if (ttsToggle && ttsToggle.checked && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         
         const sinoKoreanChapter = numberToSinoKorean(Number(chapter));
-        const speakText = `${sinoKoreanChapter}장 ${titleText}`;
+        const formattedTitle = formatTitleForTTS(titleText);
+        const speakText = `${sinoKoreanChapter}장 ${formattedTitle}`;
         // Use global variable to prevent garbage collection on some browsers
         currentUtterance = new SpeechSynthesisUtterance(speakText);
         currentUtterance.lang = 'ko-KR';
