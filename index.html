@@ -89,8 +89,11 @@
                     <select id="edit-book-select" style="flex: 1;"></select>
                 </div>
                 <textarea id="edit-textarea" rows="15" style="width: 100%; padding: 10px; font-size: 1rem; border: 1px solid var(--border-color); border-radius: 4px; resize: vertical; line-height: 1.5; font-family: inherit;" placeholder="장 제목과 요약 내용을 '|' 기호로 구분해서 입력하세요.&#10;(요약 내용이 없으면 장 제목만 입력해도 됩니다)&#10;&#10;예:&#10;천지 창조 | 태초에 하나님이 천지를 창조하시니라&#10;에덴 동산 | 아담과 하와가 에덴 동산에서 살게 됨&#10;죄의 기원과 인류의 타락"></textarea>
-                <div style="margin-top: 1rem; display: flex; gap: 10px; justify-content: flex-end;">
+                <div style="margin-top: 1rem; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
                     <button id="close-editor-btn" style="background-color: #95a5a6;">닫기</button>
+                    <button id="export-data-btn" style="background-color: #3498db;">📥 파일 내보내기</button>
+                    <button id="import-data-btn" style="background-color: #e67e22;">📤 파일 가져오기</button>
+                    <input type="file" id="import-file-input" accept=".json" style="display: none;">
                     <button id="save-data-btn" style="background-color: var(--primary-color);">💾 바로 저장</button>
                     <button id="copy-data-btn" style="background-color: var(--success-color);">전체 코드 복사</button>
                 </div>

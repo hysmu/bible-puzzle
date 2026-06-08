@@ -783,6 +783,9 @@ const editBookSelect = document.getElementById('edit-book-select');
 const editTextArea = document.getElementById('edit-textarea');
 const copyDataBtn = document.getElementById('copy-data-btn');
 const saveDataBtn = document.getElementById('save-data-btn');
+const exportDataBtn = document.getElementById('export-data-btn');
+const importDataBtn = document.getElementById('import-data-btn');
+const importFileInput = document.getElementById('import-file-input');
 
 openEditorBtn.addEventListener('click', () => {
     resetModalPosition(editorModal);
@@ -874,6 +877,71 @@ saveDataBtn.addEventListener('click', () => {
     initDropdowns();
     initGame();
     editorModal.classList.add('hidden');
+});
+
+exportDataBtn.addEventListener('click', () => {
+    // 텍스트 영역에 임시로 편집 중인 내용이 있다면 반영 후 다운로드
+    const bookId = editBookSelect.value;
+    const book = window.bibleData.books.find(b => b.id === bookId);
+    if (book) {
+        const newTitles = editTextArea.value.split('\n').map(t => t.trim()).filter(t => t !== '');
+        book.titles = newTitles;
+    }
+
+    const dataStr = JSON.stringify(window.bibleData, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'bible_data_backup.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+});
+
+importDataBtn.addEventListener('click', () => {
+    importFileInput.value = ''; // 초기화
+    importFileInput.click();
+});
+
+importFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        try {
+            const parsedData = JSON.parse(event.target.result);
+            
+            // 데이터 유효성 검사
+            if (!parsedData || !parsedData.books || !Array.isArray(parsedData.books)) {
+                throw new Error("올바른 성경 데이터 형식이 아닙니다. 'books' 배열이 필요합니다.");
+            }
+            
+            // 필수 항목 검사
+            const isValid = parsedData.books.every(b => b && b.id && b.name && Array.isArray(b.titles));
+            if (!isValid) {
+                throw new Error("각 성경 정보에 필수 항목(id, name, titles)이 누락되었거나 형식이 잘못되었습니다.");
+            }
+
+            // 반영 및 저장
+            window.bibleData = parsedData;
+            localStorage.setItem(CUSTOM_DATA_KEY, JSON.stringify(window.bibleData));
+            
+            alert("성경 데이터를 성공적으로 가져왔습니다!");
+            
+            // 화면 및 드롭다운, 게임판 갱신
+            initDropdowns();
+            initGame();
+            loadBookData();
+        } catch (error) {
+            alert("파일 분석 중 오류가 발생했습니다:\n" + error.message);
+            console.error(error);
+        }
+    };
+    reader.readAsText(file);
 });
 
 // --- Draggable Modal Logic ---
